@@ -3,12 +3,12 @@
     <h1 class="converter-title">Currency Converter</h1>
     <div class="form-group">
       <label for="amount">Amount:</label>
-      <input v-model.number="amount" type="number" id="amount" class="form-control" />
+      <input v-model.number="amount" type="number" id="amount" class="form-control">
     </div>
     <div class="form-group">
       <select v-model="from" id="from" class="form-control">
         <option v-for="currency in currencies" :key="currency" :value="currency">
-          <span class="flag-icon">{{ getFlagIcon(currency) }}</span> {{ currency }}
+          {{ getFlagEmoji(getCountryCode(currency)) }} {{ getCurrencyLetters(currency) }}
         </option>
       </select>
       <div class="switch-icon" @click="switchCurrencies">
@@ -16,13 +16,12 @@
       </div>
       <select v-model="to" id="to" class="form-control">
         <option v-for="currency in currencies" :key="currency" :value="currency">
-          <span class="flag-icon">{{ getFlagIcon(currency) }}</span> {{ currency }}
+          {{ getFlagEmoji(getCountryCode(currency)) }} {{ getCurrencyLetters(currency) }}
         </option>
       </select>
     </div>
     <div class="result">
-      <p>{{ amount }} {{ getCurrencyLetters(from) }} <span class="arrow-icon">→</span> {{ convertedAmount }} {{
-        getCurrencyLetters(to) }}</p>
+      <p>{{ amount }} {{ getCurrencyLetters(from) }} <span class="arrow-icon">→</span> {{ convertedAmount }} {{ getCurrencyLetters(to) }}</p>
     </div>
   </div>
 </template>
@@ -63,19 +62,13 @@ export default {
       });
   },
   methods: {
-    // getFlagIcon(currency): This method computes the flag icon code for a given currency. 
-    // It takes the currency as a parameter and returns the flag icon code.
-    getFlagIcon(currency) {
-      const codePoints = currency.toUpperCase().split('').map(char => 127397 + char.charCodeAt());
-      return String.fromCodePoint(...codePoints);
+    getCountryCode(currency) {
+      if (currency && currency.length >= 3) {
+        return currency.substring(0, 2).toUpperCase();
+      } else {
+        return "";
+      }
     },
-    // switchCurrencies(): This method is triggered when the "switch-icon" element is clicked. 
-    // It swaps the values of the "from" and "to" variables, allowing the user to switch the selected currencies for conversion.
-    switchCurrencies() {
-      [this.from, this.to] = [this.to, this.from];
-    },
-    // getCurrencyLetter(currency): This method takes a currency as input and returns the first, second, and third letters of the currency.
-    // It checks if the currency is defined and returns the respective letters. If the currency is undefined or shorter than 3 characters, it returns an empty string.
     getCurrencyLetters(currency) {
       if (currency && currency.length >= 3) {
         return currency.substring(0, 3);
@@ -83,9 +76,19 @@ export default {
         return "";
       }
     },
-
+    getFlagEmoji(countryCode) {
+      if (countryCode) {
+        const codePoints = countryCode
+          .split('')
+          .map((char) => 127397 + char.charCodeAt());
+        return String.fromCodePoint(...codePoints);
+      } else {
+        return "";
+      }
+    },
+    switchCurrencies() {
+      [this.from, this.to] = [this.to, this.from];
+    },
   },
 };
 </script>
-
-<style src="../styles/currency-converter.css" scoped></style>
