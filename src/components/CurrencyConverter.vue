@@ -3,7 +3,7 @@
     <h1 class="converter-title">Currency Converter</h1>
     <div class="form-group">
       <label for="amount">Amount:</label>
-      <input v-model="amount" type="text" id="amount" class="form-control">
+      <input v-model="amount" @input="updateCurrency" type="text" id="amount" class="form-control">
     </div>
     <div class="form-group">
       <select v-model="from" id="from" class="form-control">
@@ -21,7 +21,8 @@
       </select>
     </div>
     <div class="result">
-      <p>{{ amount }} {{ getCurrencyLetters(from) }} <span class="arrow-icon">→</span> {{ convertedAmount }} {{ getCurrencyLetters(to) }}</p>
+      <p>{{ amount }} {{ getCurrencyLetters(from) }} <span class="arrow-icon">→</span> {{ convertedAmount }} {{
+        getCurrencyLetters(to) }}</p>
     </div>
   </div>
 </template>
@@ -51,13 +52,14 @@ export default {
     },
   },
   mounted() {
+    // Set the default currencies to EUR and USD
+    this.from = "EUR";
+    this.to = "USD";
     axios
       .get("https://api.exchangerate-api.com/v4/latest/EUR")
       .then((response) => {
         this.rates = response.data.rates;
         this.currencies = Object.keys(this.rates);
-        this.from = this.currencies[0];
-        this.to = this.currencies[1];
       })
       .catch((error) => {
         console.error(error);
@@ -91,9 +93,21 @@ export default {
     switchCurrencies() {
       [this.from, this.to] = [this.to, this.from];
     },
+    updateCurrency() {
+      const currencyKeys = this.currencies.map((currency) =>
+        this.getCurrencyLetters(currency)
+      );
+
+      const matchingCurrencyIndex = currencyKeys.findIndex((currencyKey) =>
+        currencyKey.toLowerCase().startsWith(this.amount.toLowerCase())
+      );
+
+      if (matchingCurrencyIndex !== -1) {
+        this.from = this.currencies[matchingCurrencyIndex];
+      }
+    },
   },
 };
 </script>
-
 
 <style src="../styles/currency-converter.css" scoped></style>
