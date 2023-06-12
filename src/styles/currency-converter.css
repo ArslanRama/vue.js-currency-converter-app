@@ -31,12 +31,6 @@
   margin: 10px;
 }
 
-.currency-converter .icon {
-  width: 24px;
-  height: 24px;
-  fill: #000;
-}
-
 .currency-converter .result {
   font-size: 18px;
 }

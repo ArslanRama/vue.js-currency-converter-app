@@ -3,7 +3,7 @@
     <h1 class="converter-title">Currency Converter</h1>
     <div class="form-group">
       <label for="amount">Amount:</label>
-      <input v-model.number="amount" type="number" id="amount" class="form-control">
+      <input v-model="amount" type="text" id="amount" class="form-control">
     </div>
     <div class="form-group">
       <select v-model="from" id="from" class="form-control">
@@ -32,17 +32,19 @@ import axios from "axios";
 export default {
   data() {
     return {
-      currencies: [], // Array to store available currencies
-      from: "", // Selected currency from
-      to: "", // Selected currency to
-      amount: 0, // Amount to convert
-      rates: {}, // Object to store exchange rates
+      currencies: [],
+      from: "",
+      to: "",
+      amount: "0",
+      rates: {},
     };
   },
   computed: {
     convertedAmount() {
       if (this.rates[this.from] && this.rates[this.to]) {
-        return ((this.amount / this.rates[this.from]) * this.rates[this.to]).toFixed(2);
+        const numericAmount = parseFloat(this.amount.replace(/,/g, "")) || 0;
+        const baseAmount = numericAmount / this.rates[this.from];
+        return (baseAmount * this.rates[this.to]).toFixed(2);
       } else {
         return 0;
       }
@@ -92,3 +94,6 @@ export default {
   },
 };
 </script>
+
+
+<style src="../styles/currency-converter.css" scoped></style>
